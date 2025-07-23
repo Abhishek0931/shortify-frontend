@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import Home from "./pages/Home";
+import Login from "./components/Auth/Login";
+import Register from "./components/Auth/Register";
+import Profile from "./components/User/Profile";
 
-function App() {
+function Navbar() {
+  const { user, logout } = useAuth();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <nav>
+      <Link to = "/">Home</Link>
+      {user ? (
+        <>
+          <Link to = "/profile">Profile</Link>
+          <button onClick={logout}></button>
+        </>
+      ) : (
+        <>
+          <Link to = "/login">Login</Link>
+          <Link to = "/register">Register</Link>
+        </>
+      )}
+    </nav>
   );
 }
 
-export default App;
+export default function App() {
+  return ( 
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="*" element={<div>Page not found</div>} />  
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
